@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/data/questions.dart';
 
-import 'answer_button.dart';
+import 'styling/answer_button.dart';
 
 class QuestionsScreen extends StatefulWidget {
-  const QuestionsScreen({super.key});
+  const QuestionsScreen({
+    super.key,
+    required this.onSelectAnswer,
+  });
+
+  final void Function(String answer) onSelectAnswer;
 
   @override
   State<QuestionsScreen> createState() => _QuestionsScreenState();
@@ -12,7 +18,8 @@ class QuestionsScreen extends StatefulWidget {
 
 class _QuestionsScreenState extends State<QuestionsScreen> {
   int curQIndex = 0;
-  selectAnswer() {
+  selectAnswer(String ele) {
+    widget.onSelectAnswer(ele);
     setState(() {
       curQIndex++;
     });
@@ -21,7 +28,6 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   @override
   Widget build(BuildContext context) {
     final curQ = questions[curQIndex];
-
     return SizedBox(
       width: double.infinity,
       child: Container(
@@ -32,14 +38,22 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           children: [
             Text(
               curQ.text,
-              style: const TextStyle(color: Colors.white),
+              style: GoogleFonts.lato(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 50,
             ),
             ...curQ.getShuffledAnswers().map(
               (element) {
-                return AnswerButton(selectAnswer, element);
+                return AnswerButton(
+                  txt: element,
+                  onTap: () {
+                    selectAnswer(element);
+                  },
+                );
               },
             ),
           ],
